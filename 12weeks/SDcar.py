@@ -60,10 +60,10 @@ class Drive:
     def motor_left_s(self, speed):
         GPIO.output(self.pins[6],0)
         GPIO.output(self.pins[7],1)
-        self.L_Motor.ChangeDutyCycle(speed-10)
+        self.L_Motor.ChangeDutyCycle(speed-20)
         GPIO.output(self.pins[8],0)
         GPIO.output(self.pins[9],1)
-        self.R_Motor.ChangeDutyCycle(speed+35)
+        self.R_Motor.ChangeDutyCycle(speed+30)
         
     def motor_right(self, speed):
         GPIO.output(self.pins[6],0)
@@ -76,10 +76,10 @@ class Drive:
     def motor_right_s(self, speed):
         GPIO.output(self.pins[6],0)
         GPIO.output(self.pins[7],1)
-        self.L_Motor.ChangeDutyCycle(speed+35)
+        self.L_Motor.ChangeDutyCycle(speed+30)
         GPIO.output(self.pins[8],0)
         GPIO.output(self.pins[9],1)
-        self.R_Motor.ChangeDutyCycle(speed-10)
+        self.R_Motor.ChangeDutyCycle(speed-20)
 
     def motor_stop(self):
         GPIO.output(self.pins[6],0)

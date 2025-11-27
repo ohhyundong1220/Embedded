@@ -8,6 +8,8 @@ import datetime
 
 speed = 30
 epsilon = 0.0001
+filecnt = 0
+filecnt_hsv = 0
 
 def func_thread():
     i = 0
@@ -28,14 +30,14 @@ def save_img(frame, angle):
     filecnt+=1
     
 def save_img_2(frame, angle):
-    global filecnt
+    global filecnt_hsv
     print('filecnt', filecnt)
 
     filename = 'train_{0:05d}_{1:03d}.png'.format(filecnt, angle)
     filename = os.path.join(filepath_2, filename)
     print('filename', filename)
     cv.imwrite(filename, frame)
-    filecnt+=1
+    filecnt_hsv+=1
 
 def key_cmd(which_key,crop_img,hsv_frame):
     global enable_linetracing
@@ -43,22 +45,36 @@ def key_cmd(which_key,crop_img,hsv_frame):
     is_exit = False
     if which_key & 0xFF == 119:
         print('up')
-        car.motor_go(40)
+        car.motor_go(20)
         save_img(crop_img, 0)
         save_img_2(hsv_frame, 0)
     elif which_key & 0xFF == 115:
         print('down')
-        car.motor_back(40)
+        car.motor_back(20)
+    elif which_key & 0xFF == ord('q'):
+        print('left')     
+        #car.motor_left(20)
+        save_img(crop_img, 1)
+        save_img_2(hsv_frame, 1)   
+    elif which_key & 0xFF == ord('e'):
+        print('right')   
+        #car.motor_right(20)            
+        save_img(crop_img, 2)
+        save_img_2(hsv_frame, 2)
     elif which_key & 0xFF == 97:
         print('left')     
-        car.motor_left(40)   
+        car.motor_left_s(20)
+        save_img(crop_img, 3)
+        save_img_2(hsv_frame, 3)   
     elif which_key & 0xFF == 100:
         print('right')   
-        car.motor_right(40)            
+        car.motor_right_s(20)            
+        save_img(crop_img, 4)
+        save_img_2(hsv_frame, 4)
     elif which_key & 0xFF == 32:
         car.motor_stop()
         print('stop')   
-    elif which_key & 0xFF == ord('q'):  
+    elif which_key & 0xFF == ord('c'):  
         car.motor_stop()
         print('exit')        
         is_exit = True
@@ -203,7 +219,6 @@ if __name__ == '__main__':
     if not os.path.isdir(filepath_2):
         os.mkdir(filepath_2)
 
-    filecnt = 0
     t_task1 = threading.Thread(target = func_thread)
     t_task1.start()
 

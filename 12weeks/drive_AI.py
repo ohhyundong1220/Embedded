@@ -6,7 +6,7 @@ import sys
 import tensorflow as tf
 from tensorflow.keras.models import load_model
 
-speed = 80
+speed = 40
 epsilon = 0.0001
 
 def func_thread():
@@ -74,43 +74,6 @@ def detect_maskY_BGR(frame):
     _, mask_Y = cv.threshold(Y, 100, 255, cv.THRESH_BINARY)
     return mask_Y
 
-def line_tracing(cx):
-    #print('cx, ', cx)
-    #print('v_x_grid', v_x_grid)
-    global moment
-    global v_x
-    tolerance = 0.1
-    diff = 0
-
-    if moment[0] != 0 and moment[1] != 0 and moment[2] != 0:
-        avg_m = np.mean(moment)
-        diff = np.abs(avg_m - cx) / v_x
-    
-    #print('diff ={:.4f}'.format(diff))
-
-    if diff <= tolerance:
-
-        moment[0] = moment[1]
-        moment[1] = moment[2]
-        moment[2] = cx
-        print('cx : ', cx)
-        if v_x_grid[2] <= cx < v_x_grid[4]:
-            car.motor_go(speed) 
-            print('go')
-        elif v_x_grid[3] >= cx:
-            car.motor_left(30) 
-            print('turn left')
-        elif v_x_grid[1] <= cx:
-            car.motor_right(30) 
-            print('turn right')
-        else:
-            print("skip")    
-        
-    else:
-        car.motor_go(speed) 
-        print('go')    
-        moment = [0,0,0]
-
 def show_grid(img):
     h, _, _ = img.shape
     for x in v_x_grid:
@@ -138,17 +101,20 @@ def drive_AI(img):
     steering_angle = np.argmax(np.array(res))
     print('steering_angle', steering_angle)
     if steering_angle == 0:
-        print("go")
-        speedSet = 60
-        car.motor_go(speedSet)
+        car.motor_go(speed)
+        print('go')
     elif steering_angle == 1:
-        print("left")
-        speedSet = 20
-        car.motor_left(speedSet)          
+        car.motor_left(speed)
+        print('turn left')       
     elif steering_angle == 2:
-        print("right")
-        speedSet = 20
-        car.motor_right(speedSet)
+        car.motor_right(speed)
+        print('turn right')   
+    elif steering_angle == 3:
+        car.motor_left_s(speed)
+        print('turn left s')
+    elif steering_angle == 4:
+        car.motor_right_s(speed)
+        print('turn right s')
     else:
         print("This cannot be entered")
 
@@ -168,6 +134,7 @@ def main():
             cv.imshow('crop_img ', cv.resize(crop_img, dsize=(0,0), fx=2, fy=2))
 
             if enable_AIdrive == True:
+                crop_img = crop_img.astype(np.float32) / 255.0
                 drive_AI(crop_img)
 
             # image processing end here
@@ -198,11 +165,9 @@ if __name__ == '__main__':
     print(v_x_grid)
     moment = np.array([0, 0, 0])
 
-    model_path = "lane_navigation_20251120_2204.h5"# tf1.15  
+    model_path = "crop.h5"# tf1.15  
     
     model = load_model(model_path)
-
-    #test_fun(model)
 
     t_task1 = threading.Thread(target = func_thread)
     t_task1.start()
