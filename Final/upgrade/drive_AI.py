@@ -48,12 +48,14 @@ def object_detection():
                 image = shared_frame.copy()
                 lock.release()
 
+                last_time = current_time
+                
                 image_height, image_width, _ = image.shape
                 blob = cv.dnn.blobFromImage(image=image, size=(150,150), swapRB=True)
                 model.setInput(blob)
                 output = model.forward()
 
-                last_time = current_time
+                
                 
                 detect_flag = False
 
@@ -190,7 +192,7 @@ def main():
             ret, frame = camera.read()
             frame = cv.flip(frame,-1)
             lock.acquire()
-            shared_frame = cv.resize(frame, (300, 300))
+            shared_frame = cv.resize(frame, (150, 150))
             lock.release()
 
             #cv.imshow('camera',frame)

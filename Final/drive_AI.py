@@ -76,16 +76,18 @@ def object_detection():
                         cv.putText(image, label, (box_x, box_y - 5), cv.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
 
                         if label_name == 'clock' :
+                            car.motor_stop()
                             detect_flag = True
                 
                 if detect_flag == True:
-                    print('object detect')
-                    enable_AIdrive = False
                     car.motor_stop()
                     car.stopsignal()
+                    print('object detect')
+                    enable_AIdrive = False
                     pause = True
                     count_num = 0
                 elif pause == True and detect_flag == False:
+                    car.motor_stop()
                     count_num += 1
                     print(count_num)
                     if count_num == 4 and pause:
@@ -188,7 +190,7 @@ def main():
             ret, frame = camera.read()
             frame = cv.flip(frame,-1)
             lock.acquire()
-            shared_frame = cv.resize(frame, (300, 300))
+            shared_frame = cv.resize(frame, (150, 150))
             lock.release()
 
             #cv.imshow('camera',frame)
