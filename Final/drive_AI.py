@@ -42,7 +42,7 @@ def object_detection():
             
             current_time = time.time()
 
-            if current_time - last_time > 0.5:
+            if current_time - last_time > 0.7:
                 print(current_time - last_time)
                 lock.acquire()
                 image = shared_frame.copy()
